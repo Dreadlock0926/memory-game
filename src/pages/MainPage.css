@@ -41,6 +41,8 @@
     border-radius: 10px;
     width: 150px;
     height: 175px;
+    transition: 0.3s ease-in-out;
+
 }
 
 .pb-card:hover {
