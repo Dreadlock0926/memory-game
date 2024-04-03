@@ -5,7 +5,39 @@ import Axios from "axios";
 
 function MainPage() {
   const [pokemonIDs, setPokemonIDs] = useState([]);
+  const [pokemonCards, setPokemonCards] = useState([]);
   const [clickedPokemonCards, setClickedPokemonCards] = useState([]);
+
+  function shuffle(originalArray) {
+    var array = [].concat(originalArray);
+    var currentIndex = array.length,
+      temporaryValue,
+      randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
+  useEffect(() => {
+    if (
+      clickedPokemonCards
+        .slice(0, -1)
+        .includes(clickedPokemonCards[clickedPokemonCards.length - 1])
+    ) {
+      setClickedPokemonCards([]);
+    }
+  }, [clickedPokemonCards]);
 
   const generatePokemonIDs = () => {
     const numbers = [];
@@ -19,11 +51,12 @@ function MainPage() {
   };
 
   const clickCard = (id) => {
-    if (clickedPokemonCards.includes(id)) {
-      setClickedPokemonCards([]);
-    } else {
-      setClickedPokemonCards([...clickedPokemonCards, id]);
-    }
+    setClickedPokemonCards((prev) => prev.concat(id));
+    setPokemonCards(
+      shuffle(pokemonIDs)
+        .slice(0, 9)
+        .map((id) => <PokemonCard key={id} id={id} clickCard={clickCard} />)
+    );
   };
 
   useEffect(() => {
@@ -35,6 +68,16 @@ function MainPage() {
     setPokemonIDs(generatePokemonIDs());
   }, []);
 
+  useEffect(() => {
+    if (pokemonIDs) {
+      setPokemonCards(
+        pokemonIDs
+          .slice(0, 9)
+          .map((id) => <PokemonCard key={id} id={id} clickCard={clickCard} />)
+      );
+    }
+  }, [pokemonIDs]);
+
   return (
     <div className="main-page">
       <NavBar />
@@ -44,9 +87,7 @@ function MainPage() {
           <div className="pb-score">{clickedPokemonCards.length}/10</div>
         </div>
         <div className="pb-cards" id="scrollbar2">
-          {pokemonIDs.slice(0, 9).map((id) => (
-            <PokemonCard key={id} id={id} clickCard={clickCard} />
-          ))}
+          {pokemonCards}
         </div>
       </div>
     </div>
