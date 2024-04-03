@@ -5,6 +5,7 @@ import Axios from "axios";
 
 function MainPage() {
   const [pokemonIDs, setPokemonIDs] = useState([]);
+  const [clickedPokemonCards, setClickedPokemonCards] = useState([]);
 
   const generatePokemonIDs = () => {
     const numbers = [];
@@ -17,6 +18,19 @@ function MainPage() {
     return numbers;
   };
 
+  const clickCard = (id) => {
+    if (clickedPokemonCards.includes(id)) {
+      setClickedPokemonCards([]);
+    } else {
+      setClickedPokemonCards([...clickedPokemonCards, id]);
+    }
+  };
+
+  useEffect(() => {
+    console.log("These are the clicked cards: ");
+    console.log(clickedPokemonCards);
+  }, [clickedPokemonCards]);
+
   useEffect(() => {
     setPokemonIDs(generatePokemonIDs());
   }, []);
@@ -27,11 +41,11 @@ function MainPage() {
       <div className="play-body">
         <div className="pb-top">
           <div className="pb-countdown">00:00:00</div>
-          <div className="pb-score">3/10</div>
+          <div className="pb-score">{clickedPokemonCards.length}/10</div>
         </div>
         <div className="pb-cards" id="scrollbar2">
           {pokemonIDs.slice(0, 9).map((id) => (
-            <PokemonCard key={id} id={id} />
+            <PokemonCard key={id} id={id} clickCard={clickCard} />
           ))}
         </div>
       </div>
@@ -39,9 +53,8 @@ function MainPage() {
   );
 }
 
-function PokemonCard({ id }) {
+function PokemonCard({ id, clickCard }) {
   const [pokemonName, setPokemonName] = useState("");
-  const [pokemonID, setPokemonID] = useState(id);
 
   const pokemonData = Axios.get("https://pokeapi.co/api/v2/pokemon/" + id)
     .then((response) => {
@@ -52,7 +65,7 @@ function PokemonCard({ id }) {
     });
 
   return (
-    <div className="pb-card">
+    <div className="pb-card" onClick={() => clickCard(id)}>
       <img
         src={
           "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
