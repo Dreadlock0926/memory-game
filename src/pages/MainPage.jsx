@@ -41,7 +41,7 @@ function MainPage() {
 
   const generatePokemonIDs = () => {
     const numbers = [];
-    while (numbers.length < 15) {
+    while (numbers.length < 11) {
       const randomNumber = Math.floor(Math.random() * 1025) + 1;
       if (!numbers.includes(randomNumber)) {
         numbers.push(randomNumber);
